@@ -105,16 +105,7 @@ def _nth_proximities(X, Y, n):
     """
     proximities = np.empty(len(Y))
     for i, y in enumerate(Y):
-        heap = []
-        for distance in _distances(X, y):
-            if len(heap) < n:
-                heapq.heappush(heap, -distance)
-            else:
-                heapq.heappushpop(heap, -distance)
-        proximities[i] = -heapq.heappop(heap)
-        # distances = _distances(X, y)
-        # distances.sort()
-        # proximities[i] = distances[n-1]
+        proximities[i] = heapq.nsmallest(n, _distances(X, y))[-1]
     return proximities
 
 
