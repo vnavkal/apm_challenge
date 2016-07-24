@@ -21,8 +21,9 @@ def _load_centroids_from_file(path):
 
 def _load_coordinates_from_file(path):
     print('Loading coordinates from file...')
-    return pd.read_csv(path, dtype=np.float64).values
+    array = pd.read_csv(path, dtype=np.float64).values
     print('Finished loading coordinates')
+    return array
 
 
 def _get_closest_centroid_calculator(centroids, coordinates):
