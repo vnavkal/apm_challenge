@@ -56,7 +56,7 @@ I have created three Python files:
 \end{description}
 
 \section{Ambiguity of Bonus Question}
-It seems to me that the bonus question can be interpreted in two ways, so I should make clear the interpretation I assumed.  The bonus question asks
+It seems to me that the bonus question can be interpreted in two ways, so I should specify which interpretation I assumed.  The bonus question asks
 \begin{displayquote}
   What is the maximum radius ​$R$ such that the number of coordinates within a distance strictly less than ​$R$ ​of any centroid is at most 1000?
 \end{displayquote}
@@ -117,11 +117,11 @@ For each row \texttt{y} in \texttt{Y}, the function performs two operations:
 \end{itemize}
 The time required for the entire method to run is therefore
 \begin{align*}
-  O(\mbox{length}(\texttt{Y})\cdot (\mbox{length}(\texttt{X}) + (\mbox{length}(\texttt{X})+\texttt{n})\log \texttt{n}))
+  O(\mbox{length}(\texttt{Y})\cdot (\mbox{length}(\texttt{X}) + (\mbox{length}(\texttt{X})+\texttt{n})\log \texttt{n})).
 \end{align*}
 If $\mbox{length}(\texttt{X}) \gg \texttt{n}$, the runtime reduces to
 \begin{align}
-  O(\mbox{length}(\texttt{Y})\cdot \mbox{length}(\texttt{X}) \cdot (1+\log \texttt{n}))\label{performance}
+  O(\mbox{length}(\texttt{Y})\cdot \mbox{length}(\texttt{X}) \cdot (1+\log \texttt{n}))\label{performance}.
 \end{align}
 
 Since the arrays used for steps 1. and 2. can be forgotten after each iteration finishes, the amount of storage required for the entire method is
