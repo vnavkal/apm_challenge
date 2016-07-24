@@ -73,16 +73,19 @@ class TestClosestCentroidCalculator(unittest.TestCase):
             self._calculator.min_radius_enveloping_percent(35),
             5
         )
+
     def test_min_radius_enveloping_60_percent(self):
         self.assertAlmostEqual(
             self._calculator.min_radius_enveloping_percent(60),
             5
         )
+
     def test_min_radius_enveloping_70_percent(self):
         self.assertAlmostEqual(
             self._calculator.min_radius_enveloping_percent(70),
             10
         )
+
     def test_min_radius_enveloping_100_percent(self):
         self.assertAlmostEqual(
             self._calculator.min_radius_enveloping_percent(100),
