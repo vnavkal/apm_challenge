@@ -5,6 +5,7 @@ questions from the challenge.
 """
 
 import argparse
+import numpy as np
 import pandas as pd
 from proximity_calculation import (
     ClosestCentroidCalculator, smallest_nth_proximity
@@ -13,14 +14,14 @@ from proximity_calculation import (
 
 def _load_centroids_from_file(path):
     print('Loading centroids from file...')
-    array = pd.read_csv(path).values
+    array = pd.read_csv(path, dtype=np.float64).values
     print('Finished loading centroids')
     return array
 
 
 def _load_coordinates_from_file(path):
     print('Loading coordinates from file...')
-    return pd.read_csv(path).values
+    return pd.read_csv(path, dtype=np.float64).values
     print('Finished loading coordinates')
 
 
