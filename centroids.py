@@ -4,15 +4,15 @@ Public classes:
     ClosestCentroidCalculator
 
 Public methods:
-    furthest_nth_coordinate
+    smallest_nth_proximity
 """
 
 import heapq
 import numpy as np
 
 
-def furthest_nth_proximity(centroids, coordinates, n):
-    """Max of the nth largest distance from a centroid to any coordinate
+def smallest_nth_proximity(centroids, coordinates, n):
+    """Min of the nth largest distance from a centroid to any coordinate
 
     Parameters
     ----------
@@ -26,18 +26,20 @@ def furthest_nth_proximity(centroids, coordinates, n):
     Returns
     -------
     np.float64
-        Maximum among the set of nth largest distances between a centroid and
+        Minimum among the set of nth largest distances between a centroid and
         the set of coordinates
     """
     proximities = _nth_proximities(coordinates, centroids, n)
-    return proximities.max()
+    return proximities.min()
 
 
 class ClosestCentroidCalculator:
-    """Contains methods calculated using the closest centroid to each coordinate
+    """Contains methods relying only on the closest centroid to each coordinate
 
-    This class internally calculates and stores an array containing the distance
-    from each coordinate to the closest centroid.
+    This class contains methods that depend only on the distance from each
+    coordinate to its nearest centroid.  During initialization, the class
+    internally calculates and stores an array of those distances, and its
+    methods run quickly after the array is calculated.
 
     Parameters
     ----------

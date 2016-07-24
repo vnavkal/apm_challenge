@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from centroids import ClosestCentroidCalculator, furthest_nth_proximity
+from centroids import ClosestCentroidCalculator, smallest_nth_proximity
 
 
 class TestFurthestNthCoordinate(unittest.TestCase):
@@ -8,11 +8,11 @@ class TestFurthestNthCoordinate(unittest.TestCase):
         centroids = np.array(((0, 0),
                               (1, 0)))
         coordinates = np.array(((1, 1),
-                                (4, 4)))
-        self.assertAlmostEqual(furthest_nth_proximity(centroids, coordinates, 1),
-                               np.linalg.norm((1, 1)))
-        self.assertAlmostEqual(furthest_nth_proximity(centroids, coordinates, 2),
-                               np.linalg.norm((4, 4)))
+                                (4, 4),
+                                (-6, -8)))
+        self.assertAlmostEqual(smallest_nth_proximity(centroids, coordinates, 1), 1)
+        self.assertAlmostEqual(smallest_nth_proximity(centroids, coordinates, 2), 5)
+        self.assertAlmostEqual(smallest_nth_proximity(centroids, coordinates, 3), 10)
 
 
 class TestClosestCentroidCalculator(unittest.TestCase):

@@ -24,10 +24,15 @@ def _load_coordinates_from_file():
     print('Finished loading coordinates')
 
 
+def _get_closest_centroid_calculator(centroids_ary, coordinates_ary):
+    print('Initializing ClosestCentroidCalculator...')
+    return centroids.ClosestCentroidCalculator(centroids_ary, coordinates_ary)
+
+
 if __name__ == '__main__':
     centroids_ary = _load_centroids_from_file()
     coordinates_ary = _load_coordinates_from_file()
-    calculator = centroids.ClosestCentroidCalculator(centroids_ary, coordinates_ary)
+    calculator = _get_closest_centroid_calculator(centroids_ary, coordinates_ary)
     print('{0} coordinates are within 5 meters of a centroid.'.
           format(calculator.num_coordinates_within(5)))
     print('{0} coordinates are within 10 meters of a centroid.'.
@@ -36,5 +41,5 @@ if __name__ == '__main__':
           'a radius R of a centroid.'.
           format(calculator.min_radius_enveloping_percent(80)))
     print('{0} is the maximum radius R such that the number of coordinates '
-          'less than R meters from a centroid is at most 1000.'.
-          format(centroids.furthest_nth_proximity(centroids_ary, coordinates_ary, 1001)))
+          'less than R meters from every centroid is at most 1000.'.
+          format(centroids.smallest_nth_proximity(centroids_ary, coordinates_ary, 1001)))
