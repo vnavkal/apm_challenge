@@ -1,0 +1,122 @@
+\documentclass{amsart}
+
+%\setcounter{tocdepth}{3}
+
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{amscd}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{hyperref}
+
+% THEOREMS
+\newtheorem{thm}{Theorem}[section]
+\theoremstyle{definition}
+\newtheorem*{notes}{Notes}
+\newtheorem{lem}[thm]{Lemma}
+\theoremstyle{definition}
+\newtheorem*{defn}{Definition}
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{ex}[thm]{Example}
+\newtheorem{rem}[thm]{Remark}
+\newtheorem{exer}[thm]{Exercise}
+\newtheorem{alg}[thm]{Algorithm}
+\newtheorem{com}[thm]{Comment}
+\newtheorem{conj}[thm]{Conjecture}
+\newtheorem{goal}[thm]{Goal}
+\newtheorem{background}[thm]{Background}
+
+\begin{document}
+
+% \title[short text for running head]{full title}
+\title[Documentation for APM Challenge Code]{Documentation for APM Challenge Code}
+
+\date{}
+
+\maketitle
+
+\section{Setup}
+I chose to write my solution in Python.  To run it, you will need Python 3.5, as well as current versions of the NumPy and pandas libraries.  They can be installed with Python's package manager \texttt{pip} with
+\[
+\texttt{pip install numpy}
+\]
+and
+\[
+\texttt{pip install pandas}
+\]
+
+\section{Overview}
+I have created three Python files:
+\begin{description}
+\item[\texttt{proximity\_calculation.py}] This module contains the core logic.
+\item[\texttt{test\_proximity\_calculation.py}] This file contains unit tests for the public methods in \texttt{proximity\_calculation}.
+\item[\texttt{solve\_questions.py}] This file can be executed directly to calculate solutions to the specific questions asked.
+\end{description}
+
+\section{Solutions}
+Here are my solutions to the problems.  They can be reproduced by running
+\begin{center}
+  \texttt{python solve\_questions.py [path to centroids file] [path to coordinates file]}
+\end{center}
+\begin{itemize}
+  \item[1.] How many coordinates are within 5 meters of at least one of the ​
+    $K$ ​centroids? \textbf{90851}
+  \item[2.] How many coordinates are within 10 meters of at least one of the ​
+    $K$ ​centroids? \textbf{315614}
+  \item[3.] What is the minimum radius ​$R$ such that 80\% of coordinates are within ​$R$ ​meters of at least one of the ​$K$ ​centroids? \textbf{21.248}
+  \item[4.] What is the maximum radius ​$R$ such that the number of coordinates within a distance strictly less than ​$R$ ​of any centroid is at most 1000? \textbf{11.170}
+\end{itemize}
+
+\section{Interface}
+\texttt{proximity\_calculation} exposes the following methods, which can be used to solve the specific questions asked.
+\begin{description}
+\item[\texttt{smallest\_nth\_proximity}]\ \\
+  This function takes sets of centroid and coordinate locations as input, along with an integer $n$.  It returns the smallest radius $R$ such that some centroid contains at least $n$ coordinates within radius $R$.
+\item[\texttt{ClosestCentroidCalculator.num\_coordinates\_within}]\ \\
+  This function calculates the number of coordinates that are within a specified radius of any centroid.
+\item[\texttt{ClosestCentroidCalculator.min\_radius\_enveloping\_percent}]\ \\
+  This function takes a percent $p$ as input, and it returns the smallest radius $R$ such that a percent $p$ of coordinates are within radius $R$ of any centroid.
+\end{description}
+
+\section{Methodology}
+The main work of my solution is done in the \texttt{\_nth\_proximities} function in the \texttt{proximity\_calculation} module.  This function takes three parameters:
+\begin{description}
+\item[\texttt{X}] a numpy array with two columns
+\item[\texttt{Y}] a numpy array with two columns
+\item[\texttt{n}] an integer
+\end{description}
+The function calculates, for each row \texttt{y} in \texttt{Y}, the \texttt{n}th smallest distance from \texttt{y} to any row in \texttt{X}.  This general function can be used to solve all of the questions asked.
+
+For each row \texttt{y} in \texttt{Y}, the function performs two operations:
+\begin{itemize}
+\item[1.] Find the distance from \texttt{y} to each element of \texttt{X}.  (This is implemented in the helper method \texttt{distances}.)  This requires $O(\mbox{length}(\texttt{X}))$ operations, since it requires a fixed number of arithmetic operations for each element of \texttt{X}.  It uses $O(\mbox{length}(\texttt{X}))$ space.
+\item[2.] Find the \texttt{n}th smallest among the distances calculated in step 1.  This is done using the \texttt{heapq.nsmallest} function, which pushes each element of the set of distances into a heap of fixed size \texttt{n} and then sorts the final heap.  Since each push into a heap of size \texttt{n} is done in $O(\log \texttt{n})$ time and sorting the heap takes $O(\texttt{n}\log \texttt{n})$ time, the operation terminates in $O((\mbox{length(\texttt{X})}+\texttt{n})\log \texttt{n})$ time.  It requires $O(\texttt{n})$ space, for the heap of size \texttt{n}.
+\end{itemize}
+The time required for the entire method to run is therefore
+\begin{align*}
+  & O(\mbox{length}(\texttt{Y})\cdot (\mbox{length}(\texttt{X}) + (\mbox{length}(\texttt{X})+\texttt{n})\log \texttt{n}))
+%  =& O(\mbox{length}(\texttt{Y})\cdot (\mbox{length}(\texttt{X})+\texttt{n})\log \texttt{n}).
+\end{align*}
+If $\mbox{length}(\texttt{X}) >> \texttt{n}$, the runtime reduces to
+\begin{align}
+  O(\mbox{length}(\texttt{Y})\cdot \mbox{length}(\texttt{X}) \cdot (1+\log \texttt{n}))\label{performance}
+\end{align}
+
+Since the arrays used for steps 1. and 2. can be forgotten after each iteration finishes, the amount of storage required for the entire method is $O(\mbox{length}(\texttt{Y} + \mbox{length}(\texttt{X}) + \texttt{n}))$.
+
+From (\ref{performance}), we see that the public methods have the following time complexities, assuming $\texttt{n} << \#\mbox{coordinates}$:
+\begin{description}
+\item[\texttt{ClosestCentroidCalculator.\_\_init\_\_}]
+  \begin{align*}
+    O(\#\mbox{centroids} \cdot \#\mbox{coordinates})
+  \end{align*} (it calls \texttt{\_nth\_proximities} with $\texttt{n}=1$)
+\item[\texttt{num\_coordinates\_within}]
+  \begin{align*}O(\#\mbox{coordinates})\end{align*}
+\item[\texttt{min\_radius\_enveloping\_percent}] \begin{align*}O((\#\mbox{centroids}) \log(\#\mbox{centroids}))\end{align*}
+  (it requires sorting \texttt{\_proximities}, which has length $(\#\mbox{centroids})$)
+\item[\texttt{smallest\_nth\_proximity}]
+  \begin{align*}O(\#\mbox{centroids} \cdot \#\mbox{coordinates}\cdot (1+\log \texttt{n}))\end{align*}
+\end{description}
+
+\end{document}
