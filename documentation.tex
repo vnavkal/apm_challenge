@@ -8,6 +8,7 @@
 \usepackage{amsmath}
 \usepackage{amsthm}
 \usepackage{hyperref}
+\usepackage{csquotes}
 
 % THEOREMS
 \newtheorem{thm}{Theorem}[section]
@@ -53,6 +54,29 @@ I have created three Python files:
 \item[\texttt{test\_proximity\_calculation.py}] This file contains unit tests for the public methods in \texttt{proximity\_calculation}.
 \item[\texttt{solve\_questions.py}] This file can be executed directly to calculate solutions to the specific questions asked.
 \end{description}
+
+\section{Ambiguity of Bonus Question}
+It seems to me that the bonus question can be interpreted in two ways, so I should make clear the interpretation I assumed.  The bonus question asks
+\begin{displayquote}
+  What is the maximum radius ​$R$ such that the number of coordinates within a distance strictly less than ​$R$ ​of any centroid is at most 1000?
+\end{displayquote}
+This could be interpreted as either
+\begin{displayquote}
+  What is the maximum radius ​$R$ such that the size of the set
+  \[
+  \{x \in \mbox{coordinates}\ \mid \exists y \in \mbox{centroids s.t. } distance(x, y) < R\}
+  \]
+  is at most 1000?
+\end{displayquote}
+or
+\begin{displayquote}
+  What is the maximum radius ​$R$ such that for all centroids $y$, the size of the set
+  \[
+  \{x \in \mbox{coordinates} \mid distance(x, y) < R\}
+  \]
+  is at most 1000?
+\end{displayquote}
+I chose the second interpretation (though the first can also be easily answered with the code I wrote).
 
 \section{Solutions}
 Here are my solutions to the problems.  They can be reproduced by running
