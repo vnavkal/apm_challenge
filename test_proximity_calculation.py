@@ -37,7 +37,8 @@ class TestClosestCentroidCalculator(unittest.TestCase):
         centroids = np.array(((0, 0),
                               (1, 0)))
         coordinates = np.array(((1, 1),
-                                (4, 4)))
+                                (4, 4),
+                                (-6, -8)))
         self._calculator = ClosestCentroidCalculator(centroids, coordinates)
 
     def test_num_coordinates_within_0(self):
@@ -52,26 +53,40 @@ class TestClosestCentroidCalculator(unittest.TestCase):
     def test_num_coordinates_within_6(self):
         self.assertEqual(self._calculator.num_coordinates_within(6), 2)
 
+    def test_num_coordinates_within_9_9(self):
+        self.assertEqual(self._calculator.num_coordinates_within(9.9), 2)
+
+    def test_num_coordinates_within_10(self):
+        self.assertEqual(self._calculator.num_coordinates_within(10), 3)
+
+    def test_num_coordinates_within_100(self):
+        self.assertEqual(self._calculator.num_coordinates_within(100), 3)
+
     def test_min_radius_enveloping_10_percent(self):
         self.assertAlmostEqual(
             self._calculator.min_radius_enveloping_percent(10),
             1
         )
 
-    def test_min_radius_enveloping_50_percent(self):
+    def test_min_radius_enveloping_35_percent(self):
         self.assertAlmostEqual(
-            self._calculator.min_radius_enveloping_percent(50),
-            1
+            self._calculator.min_radius_enveloping_percent(35),
+            5
         )
     def test_min_radius_enveloping_60_percent(self):
         self.assertAlmostEqual(
             self._calculator.min_radius_enveloping_percent(60),
             5
         )
+    def test_min_radius_enveloping_70_percent(self):
+        self.assertAlmostEqual(
+            self._calculator.min_radius_enveloping_percent(70),
+            10
+        )
     def test_min_radius_enveloping_100_percent(self):
         self.assertAlmostEqual(
             self._calculator.min_radius_enveloping_percent(100),
-            5
+            10
         )
 
 
