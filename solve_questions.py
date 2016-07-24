@@ -4,25 +4,23 @@ This executable module uses the centroids library to answer the specific
 questions from the challenge.
 """
 
+import argparse
 import pandas as pd
 from proximity_calculation import (
     ClosestCentroidCalculator, smallest_nth_proximity
 )
 
-CENTROIDS_PATH = 'centroids.csv[3][1]'
-COORDINATES_PATH = 'coordinates.csv[5][1]'
 
-
-def _load_centroids_from_file():
+def _load_centroids_from_file(path):
     print('Loading centroids from file...')
-    array = pd.read_csv(CENTROIDS_PATH).values
+    array = pd.read_csv(path).values
     print('Finished loading centroids')
     return array
 
 
-def _load_coordinates_from_file():
+def _load_coordinates_from_file(path):
     print('Loading coordinates from file...')
-    return pd.read_csv(COORDINATES_PATH).values
+    return pd.read_csv(path).values
     print('Finished loading coordinates')
 
 
@@ -32,8 +30,18 @@ def _get_closest_centroid_calculator(centroids, coordinates):
 
 
 if __name__ == '__main__':
-    centroids = _load_centroids_from_file()
-    coordinates = _load_coordinates_from_file()
+    parser = argparse.ArgumentParser(
+        description='Calculate properties of distances between centroids and '
+                    'coordinates'
+    )
+    parser.add_argument('centroids_path', type=str,
+                        help='path to centroids file')
+    parser.add_argument('coordinates_path', type=str,
+                        help='path to coordinates file')
+    args = parser.parse_args()
+
+    centroids = _load_centroids_from_file(args.centroids_path)
+    coordinates = _load_coordinates_from_file(args.coordinates_path)
     calculator = _get_closest_centroid_calculator(centroids, coordinates)
     print('{0} coordinates are within 5 meters of a centroid.'.
           format(calculator.num_coordinates_within(5)))
