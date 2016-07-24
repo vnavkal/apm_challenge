@@ -53,8 +53,9 @@ class ClosestCentroidCalculator:
     """
 
     def __init__(self, centroids, coordinates):
-        self._proximities = _nth_proximities(centroids, coordinates, 1)
-        self._proximities.sort()
+        proximities = _nth_proximities(centroids, coordinates, 1)
+        proximities.sort()
+        self._sorted_proximities = proximities
 
     def num_coordinates_within(self, radius):
         """Number of coordinates within specified radius of any centroid
@@ -68,7 +69,7 @@ class ClosestCentroidCalculator:
         -------
         np.float64
         """
-        return bisect.bisect_right(self._proximities, radius)
+        return bisect.bisect_right(self._sorted_proximities, radius)
 
     def min_radius_enveloping_percent(self, percent):
         """Smallest radius containing specified percent of coordinates
@@ -85,9 +86,10 @@ class ClosestCentroidCalculator:
         np.float64
         """
         fraction = percent / 100
-        number_within_radius = math.ceil(len(self._proximities) * fraction)
+        number_within_radius = math.ceil(len(self._sorted_proximities) *
+                                         fraction)
         index = number_within_radius - 1
-        return self._proximities[index]
+        return self._sorted_proximities[index]
 
 
 def _nth_proximities(X, Y, n):
