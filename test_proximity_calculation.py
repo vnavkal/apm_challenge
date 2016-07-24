@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from centroids import ClosestCentroidCalculator, smallest_nth_proximity
+from proximity_calculation import ClosestCentroidCalculator, smallest_nth_proximity
 
 
 class TestFurthestNthCoordinate(unittest.TestCase):
