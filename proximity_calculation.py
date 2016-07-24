@@ -7,12 +7,17 @@ Public methods:
     smallest_nth_proximity
 """
 
+import math
+import bisect
 import heapq
 import numpy as np
 
 
 def smallest_nth_proximity(centroids, coordinates, n):
     """Min of the nth largest distance from a centroid to any coordinate
+
+    Returns the minimum among the set of nth largest distances between
+    each centroid and the set of coordinates
 
     Parameters
     ----------
@@ -26,8 +31,6 @@ def smallest_nth_proximity(centroids, coordinates, n):
     Returns
     -------
     np.float64
-        Minimum among the set of nth largest distances between a centroid and
-        the set of coordinates
     """
     proximities = _nth_proximities(coordinates, centroids, n)
     return proximities.min()
@@ -38,7 +41,7 @@ class ClosestCentroidCalculator:
 
     This class contains methods that depend only on the distance from each
     coordinate to its nearest centroid.  During initialization, the class
-    internally calculates and stores an array of those distances, and its
+    internally calculates and stores a sorted array of those distances, and its
     methods run quickly after the array is calculated.
 
     Parameters
@@ -51,6 +54,7 @@ class ClosestCentroidCalculator:
 
     def __init__(self, centroids, coordinates):
         self._proximities = _nth_proximities(centroids, coordinates, 1)
+        self._proximities.sort()
 
     def num_coordinates_within(self, radius):
         """Number of coordinates within specified radius of any centroid
@@ -58,13 +62,13 @@ class ClosestCentroidCalculator:
         Parameters
         ----------
         radius : numeric
-            Coordinates closer than this value to a centroid are counted
+            Coordinates within this value of a centroid are counted
 
         Returns
         -------
         np.float64
         """
-        return (self._proximities <= radius).sum()
+        return bisect.bisect_right(self._proximities, radius)
 
     def min_radius_enveloping_percent(self, percent):
         """Smallest radius containing specified percent of coordinates
@@ -79,9 +83,11 @@ class ClosestCentroidCalculator:
         Returns
         -------
         np.float64
-            Smallest radius containing percent of coordinates
         """
-        return np.percentile(self._proximities, percent, interpolation='lower')
+        fraction = percent / 100
+        number_within_radius = math.ceil(len(self._proximities) * fraction)
+        index = number_within_radius - 1
+        return self._proximities[index]
 
 
 def _nth_proximities(X, Y, n):
@@ -90,9 +96,8 @@ def _nth_proximities(X, Y, n):
     Calculate, for each coordinate y in Y, the nth smallest among the set of
     distances from y to a coordinate in X.  This method is used as a helper
     method for both the ClosestCentroidCalculator methods (in which X is the set
-    of centroids and Y is the set of coordinates), and the
-    furthest_nth_proximity method (in which X is the set of coordinates and Y is
-    the set of centroids).
+    of centroids and Y is the set of coordinates) and the furthest_nth_proximity
+    method (in which X is the set of coordinates and Y is the set of centroids).
 
     Parameters
     ----------

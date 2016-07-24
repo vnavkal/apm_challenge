@@ -60,26 +60,24 @@ Here are my solutions to the problems.  They can be reproduced by running
   \texttt{python solve\_questions.py [path to centroids file] [path to coordinates file]}
 \end{center}
 \begin{itemize}
-  \item[1.] How many coordinates are within 5 meters of at least one of the ​
-    $K$ ​centroids? \textbf{90851}
-  \item[2.] How many coordinates are within 10 meters of at least one of the ​
-    $K$ ​centroids? \textbf{315614}
+  \item[1.] How many coordinates are within 5 meters of at least one of the ​$K$ ​centroids? \textbf{90851}
+  \item[2.] How many coordinates are within 10 meters of at least one of the ​$K$ ​centroids? \textbf{315614}
   \item[3.] What is the minimum radius ​$R$ such that 80\% of coordinates are within ​$R$ ​meters of at least one of the ​$K$ ​centroids? \textbf{21.248}
   \item[4.] What is the maximum radius ​$R$ such that the number of coordinates within a distance strictly less than ​$R$ ​of any centroid is at most 1000? \textbf{11.170}
 \end{itemize}
 
 \section{Interface}
-\texttt{proximity\_calculation} exposes the following methods, which can be used to solve the specific questions asked.
+\texttt{proximity\_calculation} exposes the following methods:
 \begin{description}
 \item[\texttt{smallest\_nth\_proximity}]\ \\
   This function takes sets of centroid and coordinate locations as input, along with an integer $n$.  It returns the smallest radius $R$ such that some centroid contains at least $n$ coordinates within radius $R$.
 \item[\texttt{ClosestCentroidCalculator.num\_coordinates\_within}]\ \\
   This function calculates the number of coordinates that are within a specified radius of any centroid.
 \item[\texttt{ClosestCentroidCalculator.min\_radius\_enveloping\_percent}]\ \\
-  This function takes a percent $p$ as input, and it returns the smallest radius $R$ such that a percent $p$ of coordinates are within radius $R$ of any centroid.
+  This function takes a percent $p$ as input, and it returns the smallest radius $R$ such that a percent $p$ of coordinates are within radius $R$ of a centroid.
 \end{description}
 
-\section{Methodology}
+\section{Performance Analysis}
 The main work of my solution is done in the \texttt{\_nth\_proximities} function in the \texttt{proximity\_calculation} module.  This function takes three parameters:
 \begin{description}
 \item[\texttt{X}] a numpy array with two columns
@@ -95,28 +93,34 @@ For each row \texttt{y} in \texttt{Y}, the function performs two operations:
 \end{itemize}
 The time required for the entire method to run is therefore
 \begin{align*}
-  & O(\mbox{length}(\texttt{Y})\cdot (\mbox{length}(\texttt{X}) + (\mbox{length}(\texttt{X})+\texttt{n})\log \texttt{n}))
-%  =& O(\mbox{length}(\texttt{Y})\cdot (\mbox{length}(\texttt{X})+\texttt{n})\log \texttt{n}).
+  O(\mbox{length}(\texttt{Y})\cdot (\mbox{length}(\texttt{X}) + (\mbox{length}(\texttt{X})+\texttt{n})\log \texttt{n}))
 \end{align*}
-If $\mbox{length}(\texttt{X}) >> \texttt{n}$, the runtime reduces to
+If $\mbox{length}(\texttt{X}) \gg \texttt{n}$, the runtime reduces to
 \begin{align}
   O(\mbox{length}(\texttt{Y})\cdot \mbox{length}(\texttt{X}) \cdot (1+\log \texttt{n}))\label{performance}
 \end{align}
 
-Since the arrays used for steps 1. and 2. can be forgotten after each iteration finishes, the amount of storage required for the entire method is $O(\mbox{length}(\texttt{Y} + \mbox{length}(\texttt{X}) + \texttt{n}))$.
+Since the arrays used for steps 1. and 2. can be forgotten after each iteration finishes, the amount of storage required for the entire method is
+\begin{align}
+  O(\mbox{length}(\texttt{Y}) + \mbox{length}(\texttt{X}) + \texttt{n}). \label{storage}
+\end{align}
 
-From (\ref{performance}), we see that the public methods have the following time complexities, assuming $\texttt{n} << \#\mbox{coordinates}$:
+Let $K$ be the number of centroids and $N$ the number of coordinates.  Then from (\ref{performance}), we see that the public methods have the following time complexities:
 \begin{description}
-\item[\texttt{ClosestCentroidCalculator.\_\_init\_\_}]
+\item[\texttt{ClosestCentroidCalculator.\_\_init\_\_}]\ \\
+  This function calls \texttt{\_nth\_proximities} with $\texttt{n}=1$ and then it sorts the array, so its time complexity is
   \begin{align*}
-    O(\#\mbox{centroids} \cdot \#\mbox{coordinates})
-  \end{align*} (it calls \texttt{\_nth\_proximities} with $\texttt{n}=1$)
-\item[\texttt{num\_coordinates\_within}]
-  \begin{align*}O(\#\mbox{coordinates})\end{align*}
-\item[\texttt{min\_radius\_enveloping\_percent}] \begin{align*}O((\#\mbox{centroids}) \log(\#\mbox{centroids}))\end{align*}
-  (it requires sorting \texttt{\_proximities}, which has length $(\#\mbox{centroids})$)
-\item[\texttt{smallest\_nth\_proximity}]
-  \begin{align*}O(\#\mbox{centroids} \cdot \#\mbox{coordinates}\cdot (1+\log \texttt{n}))\end{align*}
+    O(NK + N\log N)
+  \end{align*}
+\item[\texttt{num\_coordinates\_within}]\ \\
+  This function performs a binary search on the sorted set of coordinate proximities, so its complexity is
+  \begin{align*}O(\log N)\end{align*}
+\item[\texttt{min\_radius\_enveloping\_percent}]\ \\
+  This function does a constant number of arithmetic operations and an array lookup, so it runs in constant time.
+\item[\texttt{smallest\_nth\_proximity}]\ \\
+  This function's main work is done in a call to \texttt{\_nth\_proximities} with \texttt{X} the set of coordinates and \texttt{Y} the set of centroids.  Assuming $\texttt{n} \ll N$, its complexity is
+  \begin{align*}O(NK(1+\log \texttt{n}))\end{align*}
 \end{description}
 
+Each of these methods requires no significant extra storage after \texttt{\_nth\_proximities} runs, so if $n \ll N$, then by (\ref{storage}) each of these methods requires $O(N+K)$ space.
 \end{document}
