@@ -98,7 +98,7 @@ Here are my solutions to the problems.  They can be reproduced by running
 \item[\texttt{ClosestCentroidCalculator.num\_coordinates\_within}]\ \\
   This function calculates the number of coordinates that are within a specified radius of any centroid.
 \item[\texttt{ClosestCentroidCalculator.min\_radius\_enveloping\_percent}]\ \\
-  This function takes a percent $p$ as input, and it returns the smallest radius $R$ such that a percent $p$ of coordinates are within radius $R$ of a centroid.
+  This function takes a percent $p$ as input, and it returns the smallest radius $R$ such that a percent $p$ of coordinates are within radius $R$ of any centroid.
 \end{description}
 
 \section{Performance Analysis}
@@ -112,7 +112,7 @@ The function calculates, for each row \texttt{y} in \texttt{Y}, the \texttt{n}th
 
 For each row \texttt{y} in \texttt{Y}, the function performs two operations:
 \begin{itemize}
-\item[1.] Find the distance from \texttt{y} to each element of \texttt{X}.  (This is implemented in the helper method \texttt{distances}.)  This requires $O(\mbox{length}(\texttt{X}))$ operations, since it requires a fixed number of arithmetic operations for each element of \texttt{X}.  It uses $O(\mbox{length}(\texttt{X}))$ space.
+\item[1.] Find the distance from \texttt{y} to each element of \texttt{X}.  (This is implemented in the helper method \texttt{\_distances}.)  This requires $O(\mbox{length}(\texttt{X}))$ operations, since it requires a fixed number of arithmetic operations for each element of \texttt{X}.  It uses $O(\mbox{length}(\texttt{X}))$ space.
 \item[2.] Find the \texttt{n}th smallest among the distances calculated in step 1.  This is done using the \texttt{heapq.nsmallest} function, which pushes each element of the set of distances into a heap of fixed size \texttt{n} and then sorts the final heap.  Since each push into a heap of size \texttt{n} is done in $O(\log \texttt{n})$ time and sorting the heap takes $O(\texttt{n}\log \texttt{n})$ time, the operation terminates in $O((\mbox{length(\texttt{X})}+\texttt{n})\log \texttt{n})$ time.  It requires $O(\texttt{n})$ space, for the heap of size \texttt{n}.
 \end{itemize}
 The time required for the entire method to run is therefore
